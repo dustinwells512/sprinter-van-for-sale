@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2020 Mercedes Sprinter Adventure Camper Van For Sale</title>
     <meta name="description" content="Professional adventure camper van with ARB Air Locker rear differential, lithium power system, and premium off-road upgrades. Turn-key and ready for off-grid adventures.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -33,8 +34,9 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title">2020 Mercedes Sprinter</h1>
-            <h2 class="hero-subtitle">Professional Overland Adventure Camper</h2>
-            <p class="hero-description">Turn-key adventure camper with ARB Air Locker, 800Ah lithium power, complete Owl Van exterior system, and premium off-road upgrades</p>
+            <h2 class="hero-subtitle">Premium Overlander - Fully Kitted & Ready to Roll</h2>
+            <p class="hero-description"><strong>This isn't just another van—it's your adventure headquarters. Brand new Agile Offroad suspension with Fox 2.5" shocks, Agile Offroad wheels & tires, complete OWL exterior system, ARB Air Locker, 800Ah lithium power, Starlink connectivity, and storage everywhere.<br><br><span class="hero-tagline">Turn-key and trail-ready.</span></strong></p>
+            <div class="hero-price">$xxx,xxx</div>
             <div class="hero-stats">
                 <div class="stat">
                     <span class="stat-number">~68,735</span>
@@ -62,7 +64,7 @@
                         <i data-lucide="mountain"></i>
                     </div>
                     <h3>Off-Road Ready</h3>
-                    <p>ARB Air Locker rear differential, RIP KIT VS30 suspension with Fox rear shocks, premium A/T tires</p>
+                    <p>ARB Air Locker rear differential, RIP KIT VS30 suspension with Agile Offroad components and Fox 2.5" rear shocks, premium A/T tires</p>
                 </div>
                 <div class="highlight-card">
                     <div class="highlight-icon">
@@ -142,14 +144,14 @@
                 <div class="feature-grid">
                     <div class="feature-item">
                         <h4>RIP KIT VS30 Baja Package</h4>
-                        <p>Professional off-road suspension with Fox rear shocks and ~2.5" lift</p>
+                        <p>Agile Offroad front coil assist, B6 struts, heavy-duty leaf springs, Fox 2.5" rear shocks - adds ~2.5" lift</p>
                     </div>
                     <div class="feature-item">
                         <h4>Fox 2.5" Digressive Shocks</h4>
                         <p>Premium Fox rear shocks for superior off-road performance</p>
                     </div>
                     <div class="feature-item">
-                        <h4>Overlander XT Wheels</h4>
+                        <h4>Overlander XT Wheels by Agile Offroad</h4>
                         <p>Matte grey with matte black lip, cast-flow-formed construction - BRAND NEW with <10 miles (5 total)</p>
                     </div>
                     <div class="feature-item">
@@ -278,6 +280,10 @@
                         <h4>Cab Liner/Overhead Storage</h4>
                         <p>Organized overhead storage with protective cab liner</p>
                     </div>
+                    <div class="feature-item">
+                        <h4>Owl Molle Seatback Panels</h4>
+                        <p>Tactical storage and organization panels for driver and passenger seats (pair)</p>
+                    </div>
                 </div>
             </div>
 
@@ -295,10 +301,6 @@
                     <div class="feature-item">
                         <h4>Four-Wheel Alignment</h4>
                         <p>Professional alignment completed after suspension installation</p>
-                    </div>
-                    <div class="feature-item">
-                        <h4>Inverter Replacement</h4>
-                        <p>Brand new Renogy 3000W inverter installed (November 2025)</p>
                     </div>
                 </div>
             </div>
@@ -341,13 +343,14 @@
                 <div class="spec-card">
                     <h3>Suspension & Wheels</h3>
                     <ul>
-                        <li><strong>Suspension:</strong> RIP KIT VS30 Baja Package with Fox rear shocks</li>
+                        <li><strong>Suspension:</strong> RIP KIT VS30 Baja Package with Agile Offroad components</li>
                         <li><strong>Lift:</strong> ~2.5 inches</li>
-                        <li><strong>Front:</strong> Agile B6 struts with coil assist</li>
-                        <li><strong>Rear:</strong> Fox 2.5" digressive shocks</li>
-                        <li><strong>Wheels:</strong> Overlander XT - BRAND NEW with <10 miles (5 total)</li>
+                        <li><strong>Front:</strong> Agile Offroad B6 struts with coil assist</li>
+                        <li><strong>Rear:</strong> Fox 2.5" digressive shocks, Agile Offroad heavy-duty leaf springs</li>
+                        <li><strong>Wheels:</strong> Overlander XT by Agile Offroad - BRAND NEW with <10 miles (5 total)</li>
                         <li><strong>Tires:</strong> Falken Wildpeak A/T4W 265/70-17 - BRAND NEW with <10 miles (5 total)</li>
                         <li><strong>Differential:</strong> ARB Air Locker (4.18 ratio)</li>
+                        <li><strong>Drivetrain:</strong> 2WD with ARB Air Locker for enhanced off-road capability</li>
                     </ul>
                 </div>
 
@@ -387,6 +390,10 @@
                     <p>Minor areas need touch-up paint</p>
                 </div>
                 <div class="disclosure-item">
+                    <h4>Floor Scuff</h4>
+                    <p>Small scuff mark on interior floor</p>
+                </div>
+                <div class="disclosure-item">
                     <h4>Trailer Basket</h4>
                     <p>Basket shown in photos can be included with pickup at different location</p>
                 </div>
@@ -407,7 +414,8 @@
 
             <div class="contact-info">
                 <a href="#" id="emailLink" class="contact-button">Send Email</a>
-                <p class="contact-note">Serious inquiries only. Van located in Arizona.</p>
+                <p class="contact-email">Email: <span id="emailDisplay"></span></p>
+                <p class="contact-note">Serious inquiries only. Van located in Colorado Western Slopes.</p>
             </div>
             <script>
                 // Bot protection - email built dynamically
@@ -417,6 +425,7 @@
                     const tld = 'com';
                     const email = user + '@' + domain + '.' + tld;
                     document.getElementById('emailLink').href = 'mailto:' + email;
+                    document.getElementById('emailDisplay').textContent = email;
                 })();
             </script>
         </div>

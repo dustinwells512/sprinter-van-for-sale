@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Main body - tall and boxy like Sprinter -->
+  <rect x="2" y="25" width="96" height="55" fill="#5B7C99" rx="2"/>
+  <!-- High roof section -->
+  <rect x="22" y="15" width="76" height="12" fill="#4A6580" rx="2"/>
+  <!-- Windshield -->
+  <path d="M5 32 L13 26 L20 26 L20 38 L5 38 Z" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Side windows -->
+  <rect x="28" y="30" width="24" height="15" fill="#FFFFFF" opacity="0.9"/>
+  <rect x="56" y="30" width="36" height="15" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Front wheel -->
+  <circle cx="24" cy="82" r="9" fill="#323232"/>
+  <circle cx="24" cy="82" r="4" fill="#666666"/>
+  <!-- Rear wheel -->
+  <circle cx="78" cy="82" r="9" fill="#323232"/>
+  <circle cx="78" cy="82" r="4" fill="#666666"/>
+  <!-- Bottom trim -->
+  <rect x="2" y="75" width="96" height="3" fill="#323232"/>
+</svg>

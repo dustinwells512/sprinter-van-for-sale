@@ -1,0 +1,13 @@
+node_modules/
+.vercel
+.DS_Store
+photo-categorizer.html
+photo-order-editor.html
+Invoices/
+CLAUDE.md
+INTERNAL-TODO.md
+MODIFICATIONS-MADE.md
+COMPLETE-FEATURE-LIST.md
+Specs-and-info.md
+TOTAL-COSTS.md
+Tommy-Camper-Van-Listing.md

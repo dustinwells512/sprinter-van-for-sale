@@ -7,7 +7,6 @@ const photos = [
     "Photos/Tommy-og-photos/240322105704-tcv-reese.jpg",
     "Photos/IMG_1070 (1).jpg",
     "Photos/IMG_1674 (1).jpg",
-    "Photos/IMG_2830 (1).jpg",
     "Photos/IMG_1861 (1).jpg",
     "Photos/IMG_1594 (1).jpg",
     "Photos/IMG_1420.jpg",
@@ -165,6 +164,31 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+// Touch swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.getElementById('lightbox').addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+document.getElementById('lightbox').addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}, false);
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    if (touchEndX < touchStartX - swipeThreshold) {
+        // Swiped left - next image
+        nextImage();
+    }
+    if (touchEndX > touchStartX + swipeThreshold) {
+        // Swiped right - previous image
+        prevImage();
+    }
+}
 
 // Smooth scroll behavior for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
