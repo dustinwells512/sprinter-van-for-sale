@@ -1,5 +1,3 @@
 {
-  "buildCommand": null,
-  "outputDirectory": ".",
-  "installCommand": null
+  "framework": "nextjs"
 }

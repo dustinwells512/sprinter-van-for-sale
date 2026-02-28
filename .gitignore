@@ -1,6 +1,8 @@
 node_modules/
+.next/
 .vercel
 .DS_Store
+.env.local
 photo-categorizer.html
 photo-order-editor.html
 Invoices/
@@ -11,3 +13,4 @@ COMPLETE-FEATURE-LIST.md
 Specs-and-info.md
 TOTAL-COSTS.md
 Tommy-Camper-Van-Listing.md
+.env*.local
