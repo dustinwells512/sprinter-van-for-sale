@@ -328,13 +328,13 @@ async function sendAutoReply(data: {
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
   <p>Hi ${firstName},</p>
 
-  <p>Thanks for reaching out about the 2020 Mercedes Sprinter. I got your message and wanted to follow up personally.</p>
+  <p>Thanks for reaching out about the 2020 Mercedes Sprinter — I got your message.</p>
 
   ${contextLine ? `<p>${contextLine}</p>` : ""}
 
   <p>You mentioned your timeline is <strong>${timelineLabel.toLowerCase()}</strong> — that's great to know.</p>
 
-  <p>To help me prepare for our conversation, I'd love to learn a bit more:</p>
+  <p>A few quick questions to help move things along:</p>
 
   <ol style="line-height: 1.8;">
     <li><strong>What draws you to this particular van?</strong> Whether it's the off-road setup, the interior, or something else — it helps me know what to focus on.</li>
@@ -342,7 +342,7 @@ async function sendAutoReply(data: {
     <li><strong>Are you in Colorado or would you be traveling for pickup?</strong> The van is on the Western Slopes and I'm flexible on scheduling viewings.</li>
   </ol>
 
-  <p>Just reply to this email with your answers and we'll go from there. If you'd prefer to chat by phone, let me know and I'll send over some times.</p>
+  <p>Just reply to this email and we'll go from there.</p>
 
   <p style="margin-top: 2rem;">
     Talk soon,<br>
@@ -358,19 +358,19 @@ async function sendAutoReply(data: {
 
   const textBody = `Hi ${firstName},
 
-Thanks for reaching out about the 2020 Mercedes Sprinter. I got your message and wanted to follow up personally.
+Thanks for reaching out about the 2020 Mercedes Sprinter — I got your message.
 
 ${contextLine || ""}
 
 You mentioned your timeline is ${timelineLabel.toLowerCase()} — that's great to know.
 
-To help me prepare for our conversation, I'd love to learn a bit more:
+A few quick questions to help move things along:
 
 1. What draws you to this particular van? Whether it's the off-road setup, the interior, or something else — it helps me know what to focus on.
 2. Have you owned a Sprinter or done van life before? Happy to go deeper on the technical details if that's helpful.
 3. Are you in Colorado or would you be traveling for pickup? The van is on the Western Slopes and I'm flexible on scheduling viewings.
 
-Just reply to this email with your answers and we'll go from there. If you'd prefer to chat by phone, let me know and I'll send over some times.
+Just reply to this email and we'll go from there.
 
 Talk soon,
 Dustin

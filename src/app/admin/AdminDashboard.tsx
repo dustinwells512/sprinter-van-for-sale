@@ -1,5 +1,5 @@
 import { getSupabase } from "@/app/lib/supabase";
-import ProspectRow from "./ProspectRow";
+import ProspectList from "./ProspectList";
 import LogoutButton from "./LogoutButton";
 
 export type Prospect = {
@@ -94,15 +94,6 @@ export default async function AdminDashboard() {
     };
   });
 
-  const statusCounts = { new: 0, contacted: 0, interested: 0, closed: 0 };
-  const fraudCounts = { green: 0, yellow: 0, red: 0 };
-  for (const p of prospects) {
-    const s = (p.meta_status ?? "new") as keyof typeof statusCounts;
-    if (s in statusCounts) statusCounts[s]++;
-    const f = (p.metadata?.fraudFlag ?? "green") as keyof typeof fraudCounts;
-    if (f in fraudCounts) fraudCounts[f]++;
-  }
-
   return (
     <div className="admin-layout">
       <div className="admin-header">
@@ -110,66 +101,7 @@ export default async function AdminDashboard() {
         <LogoutButton />
       </div>
       <div className="admin-content">
-        <div className="admin-stats">
-          <div className="admin-stat-card">
-            <div className="stat-value">{prospects.length}</div>
-            <div className="stat-label">Total</div>
-          </div>
-          <div className="admin-stat-card">
-            <div className="stat-value">{statusCounts.new}</div>
-            <div className="stat-label">New</div>
-          </div>
-          <div className="admin-stat-card">
-            <div className="stat-value">{statusCounts.contacted}</div>
-            <div className="stat-label">Contacted</div>
-          </div>
-          <div className="admin-stat-card">
-            <div className="stat-value">{statusCounts.interested}</div>
-            <div className="stat-label">Interested</div>
-          </div>
-          <div className="admin-stat-card">
-            <div className="stat-value" style={{ color: "#28a745" }}>{fraudCounts.green}</div>
-            <div className="stat-label">Clean</div>
-          </div>
-          <div className="admin-stat-card">
-            <div className="stat-value" style={{ color: "#ffc107" }}>{fraudCounts.yellow}</div>
-            <div className="stat-label">Caution</div>
-          </div>
-          <div className="admin-stat-card">
-            <div className="stat-value" style={{ color: "#dc3545" }}>{fraudCounts.red}</div>
-            <div className="stat-label">Flagged</div>
-          </div>
-        </div>
-
-        {prospects.length === 0 ? (
-          <div className="admin-empty">
-            <p>No submissions yet.</p>
-          </div>
-        ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Risk</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Timeline</th>
-                  <th>Message</th>
-                  <th>Intel</th>
-                  <th>Status</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {prospects.map((p) => (
-                  <ProspectRow key={p.id} prospect={p} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <ProspectList prospects={prospects} />
       </div>
     </div>
   );

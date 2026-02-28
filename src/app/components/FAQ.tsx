@@ -21,7 +21,7 @@ const faqs = [
   },
   {
     q: "Can I schedule a viewing?",
-    a: "Absolutely. Fill out the contact form below and we\u2019ll coordinate a time that works.",
+    a: "Absolutely. To respect everyone\u2019s time and ensure we\u2019re working with serious buyers, we do require proof of funds or proof of financing before scheduling a viewing. Once verified, we\u2019ll coordinate a time that works. Fill out the contact form below to get started.",
   },
   {
     q: "Is financing available?",
