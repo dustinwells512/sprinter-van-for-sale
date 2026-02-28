@@ -11,8 +11,19 @@ type Filter =
   | "interested"
   | "closed";
 
-export default function ProspectList({ prospects }: { prospects: Prospect[] }) {
+export default function ProspectList({ prospects: initial }: { prospects: Prospect[] }) {
+  const [prospects, setProspects] = useState(initial);
   const [filter, setFilter] = useState<Filter>(null);
+
+  const handleDelete = (id: string) => {
+    setProspects((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleStatusChange = (id: string, newStatus: string) => {
+    setProspects((prev) =>
+      prev.map((p) => p.id === id ? { ...p, meta_status: newStatus } : p)
+    );
+  };
 
   const statusCounts = { new: 0, contacted: 0, interested: 0, closed: 0 };
   for (const p of prospects) {
@@ -82,7 +93,7 @@ export default function ProspectList({ prospects }: { prospects: Prospect[] }) {
             </thead>
             <tbody>
               {filtered.map((p) => (
-                <ProspectRow key={p.id} prospect={p} />
+                <ProspectRow key={p.id} prospect={p} onDelete={handleDelete} onStatusChange={handleStatusChange} />
               ))}
             </tbody>
           </table>

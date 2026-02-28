@@ -40,3 +40,36 @@ export async function PATCH(
 
   return NextResponse.json({ success: true });
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session")?.value;
+  if (!session || session !== process.env.ADMIN_PASSWORD_HASH) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const supabase = getSupabase();
+
+  // Delete meta first (or let CASCADE handle it), then the submission
+  await supabase
+    .schema("forms")
+    .from("submission_meta")
+    .delete()
+    .eq("submission_id", id);
+
+  const { error } = await supabase
+    .schema("forms")
+    .from("submissions")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}

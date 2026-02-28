@@ -8,13 +8,15 @@ const STATUSES = ["new", "contacted", "interested", "closed"] as const;
 const RISK_LEVELS = ["green", "yellow", "red"] as const;
 const RISK_LABELS: Record<string, string> = { green: "OK", yellow: "Caution", red: "Risk" };
 
-export default function ProspectRow({ prospect }: { prospect: Prospect }) {
+export default function ProspectRow({ prospect, onDelete, onStatusChange }: { prospect: Prospect; onDelete: (id: string) => void; onStatusChange: (id: string, newStatus: string) => void }) {
   const autoRisk = prospect.metadata?.fraudFlag ?? "green";
   const [status, setStatus] = useState(prospect.meta_status ?? "new");
   const [risk, setRisk] = useState(prospect.meta_risk ?? autoRisk);
   const [notes, setNotes] = useState(prospect.meta_notes ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const save = useCallback(
@@ -106,6 +108,7 @@ export default function ProspectRow({ prospect }: { prospect: Prospect }) {
             onChange={(e) => {
               setStatus(e.target.value);
               save(e.target.value, notes);
+              onStatusChange(prospect.id, e.target.value);
             }}
           >
             {STATUSES.map((s) => (
@@ -169,6 +172,39 @@ export default function ProspectRow({ prospect }: { prospect: Prospect }) {
               />
               {saving && <div className="save-indicator">Saving...</div>}
               {saved && <div className="save-indicator">Saved</div>}
+            </div>
+            <div className="prospect-actions">
+              {!confirmDelete ? (
+                <button
+                  className="delete-btn"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Delete
+                </button>
+              ) : (
+                <div className="delete-confirm">
+                  <span>Are you sure?</span>
+                  <button
+                    className="delete-btn confirm"
+                    disabled={deleting}
+                    onClick={async () => {
+                      setDeleting(true);
+                      await fetch(`/api/admin/submissions/${prospect.id}`, {
+                        method: "DELETE",
+                      });
+                      onDelete(prospect.id);
+                    }}
+                  >
+                    {deleting ? "Deleting..." : "Yes, delete"}
+                  </button>
+                  <button
+                    className="delete-btn cancel"
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </td>

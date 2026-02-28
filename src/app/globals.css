@@ -1043,6 +1043,56 @@ body {
     position: relative;
 }
 
+.prospect-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+}
+
+.delete-btn {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: white;
+    color: #999;
+}
+
+.delete-btn:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.delete-btn.confirm {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.delete-btn.confirm:hover {
+    background: #c82333;
+}
+
+.delete-btn.confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.delete-btn.cancel {
+    color: #666;
+}
+
+.delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #dc3545;
+    font-weight: 600;
+}
+
 .detail-label {
     display: inline-block;
     font-size: 0.7rem;
