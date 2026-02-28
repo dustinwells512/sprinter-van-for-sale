@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import type { Prospect } from "./AdminDashboard";
+import { TIMELINE_LABELS } from "./AdminDashboard";
 
 const STATUSES = ["new", "contacted", "interested", "closed"] as const;
 
@@ -42,20 +43,70 @@ export default function ProspectRow({ prospect }: { prospect: Prospect }) {
   const dateStr = date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric",
     hour: "numeric",
     minute: "2-digit",
   });
 
+  const meta = prospect.metadata;
+  const fraudFlag = meta?.fraudFlag ?? "green";
+  const fraudReasons = meta?.fraudReasons ?? [];
+  const geo = meta?.geo;
+  const timeOnPage = meta?.timeOnPage;
+  const timeline = prospect.values.timeline;
+
   return (
     <tr>
-      <td style={{ whiteSpace: "nowrap" }}>{dateStr}</td>
-      <td>{prospect.values.name ?? ""}</td>
+      <td style={{ whiteSpace: "nowrap", fontSize: "0.8rem" }}>{dateStr}</td>
       <td>
-        <a href={`mailto:${prospect.values.email}`}>{prospect.values.email}</a>
+        <span
+          className={`fraud-flag ${fraudFlag}`}
+          title={fraudReasons.join("\n")}
+        >
+          <span className={`fraud-dot ${fraudFlag}`} />
+          {fraudFlag === "green" ? "OK" : fraudFlag === "yellow" ? "Caution" : "Risk"}
+        </span>
+      </td>
+      <td style={{ fontWeight: 600 }}>{prospect.values.name ?? ""}</td>
+      <td>
+        <a href={`mailto:${prospect.values.email}`} style={{ color: "#5B7C99" }}>
+          {prospect.values.email}
+        </a>
+        {meta?.emailDomain && (
+          <div className="meta-details">
+            <span>{meta.isDisposableEmail ? "Disposable" : meta.isFreeEmail ? "Free email" : meta.emailDomain}</span>
+          </div>
+        )}
       </td>
       <td>{prospect.values.phone ?? ""}</td>
-      <td style={{ maxWidth: 300 }}>{prospect.values.message ?? ""}</td>
+      <td style={{ whiteSpace: "nowrap", fontSize: "0.85rem" }}>
+        {timeline ? TIMELINE_LABELS[timeline] || timeline : "—"}
+      </td>
+      <td style={{ maxWidth: 250, fontSize: "0.85rem" }}>{prospect.values.message ?? ""}</td>
+      <td>
+        <div className="meta-details">
+          {geo && (
+            <span>
+              {[geo.city, geo.region, geo.countryCode].filter(Boolean).join(", ")}
+            </span>
+          )}
+          {geo?.isp && <span>{geo.isp}</span>}
+          {geo?.proxy && <span style={{ color: "#dc3545" }}>VPN/Proxy</span>}
+          {geo?.hosting && <span style={{ color: "#dc3545" }}>Datacenter IP</span>}
+          {timeOnPage !== undefined && (
+            <span>{timeOnPage < 60 ? `${timeOnPage}s` : `${Math.floor(timeOnPage / 60)}m ${timeOnPage % 60}s`} on page</span>
+          )}
+          {meta?.isDuplicate && (
+            <span style={{ color: "#856404" }}>
+              Repeat ({meta.duplicateCount} prev)
+            </span>
+          )}
+          {fraudReasons.length > 0 && fraudFlag !== "green" && (
+            <span style={{ color: fraudFlag === "red" ? "#dc3545" : "#856404", fontStyle: "italic" }}>
+              {fraudReasons.join("; ")}
+            </span>
+          )}
+        </div>
+      </td>
       <td>
         <select
           className="status-select"

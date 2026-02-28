@@ -5,6 +5,7 @@ import Gallery from "./components/Gallery";
 import Features from "./components/Features";
 import Specs from "./components/Specs";
 import Disclosure from "./components/Disclosure";
+import FAQ from "./components/FAQ";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
 
@@ -18,12 +19,17 @@ export default function Home() {
       <Features />
       <Specs />
       <Disclosure />
+      <FAQ />
       <section id="contact" className="contact">
         <div className="container">
+          <div className="availability-badge">
+            <span className="availability-dot" />
+            Available
+          </div>
           <h2 className="section-title">Interested?</h2>
           <p className="contact-intro">
             This professional overland adventure camper is ready for its next
-            adventure. Reach out to schedule a viewing or for more information.
+            owner. Fill out the form below and we&apos;ll follow up personally.
           </p>
           <ContactForm />
           <div className="contact-info" style={{ marginTop: "1.5rem" }}>

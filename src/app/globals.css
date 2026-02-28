@@ -540,6 +540,69 @@ body {
     color: var(--dark);
 }
 
+/* FAQ Section */
+.faq {
+    padding: 5rem 0;
+    background-color: var(--white);
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    padding: 1.5rem;
+    background: var(--cream);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.faq-question {
+    color: var(--dark);
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    color: var(--gray-medium);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Availability Badge */
+.availability-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.availability-dot {
+    width: 10px;
+    height: 10px;
+    background: #28a745;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
 /* Contact Section */
 .contact {
     padding: 5rem 0;
@@ -616,6 +679,37 @@ body {
 .form-group textarea {
     min-height: 120px;
     resize: vertical;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    cursor: pointer;
+}
+
+.form-group select option {
+    background: #4a6b85;
+    color: white;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.15);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
 }
 
 .hp-field {
@@ -901,6 +995,44 @@ body {
     font-size: 0.75rem;
     color: var(--secondary-color);
     margin-top: 0.25rem;
+}
+
+.fraud-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.fraud-flag.green { background: #d4edda; color: #155724; }
+.fraud-flag.yellow { background: #fff3cd; color: #856404; }
+.fraud-flag.red { background: #f8d7da; color: #721c24; }
+
+.fraud-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.fraud-dot.green { background: #28a745; }
+.fraud-dot.yellow { background: #ffc107; }
+.fraud-dot.red { background: #dc3545; }
+
+.meta-details {
+    font-size: 0.75rem;
+    color: var(--gray-medium);
+    line-height: 1.5;
+    margin-top: 0.25rem;
+}
+
+.meta-details span {
+    display: block;
 }
 
 .admin-empty {

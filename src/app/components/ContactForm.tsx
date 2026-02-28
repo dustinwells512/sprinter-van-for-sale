@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, useRef, FormEvent } from "react";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const loadTimeRef = useRef(Date.now());
+
+  // Track page load time for time-on-page metric
+  useEffect(() => {
+    loadTimeRef.current = Date.now();
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,30 +26,22 @@ export default function ContactForm() {
     setStatus("submitting");
     setErrorMsg("");
 
+    const timeOnPage = Math.round((Date.now() - loadTimeRef.current) / 1000);
+
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_DUSTYLABS_API_URL}/api/forms`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": process.env.NEXT_PUBLIC_DUSTYLABS_API_KEY!,
-          },
-          body: JSON.stringify({
-            formId: process.env.NEXT_PUBLIC_FORM_ID || "sprinter-van-contact",
-            values: {
-              name: data.get("name"),
-              email: data.get("email"),
-              phone: data.get("phone") || "",
-              message: data.get("message"),
-            },
-            metadata: {
-              submittedAt: new Date().toISOString(),
-              referrer: document.referrer || "",
-            },
-          }),
-        }
-      );
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          phone: data.get("phone") || "",
+          message: data.get("message"),
+          timeline: data.get("timeline"),
+          timeOnPage,
+          referrer: document.referrer || "",
+        }),
+      });
 
       if (!res.ok) {
         const body = await res.json().catch(() => null);
@@ -62,8 +60,8 @@ export default function ContactForm() {
       <div className="form-success">
         <h3>Message Sent!</h3>
         <p>
-          Thanks for reaching out. We&apos;ll get back to you as soon as
-          possible.
+          Thanks for reaching out. Check your inbox &mdash; we&apos;ve sent a
+          follow-up with a couple of questions so we can prepare for our conversation.
         </p>
       </div>
     );
@@ -106,6 +104,17 @@ export default function ContactForm() {
           placeholder="(optional)"
           autoComplete="tel"
         />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="timeline">Purchase Timeline *</label>
+        <select id="timeline" name="timeline" required>
+          <option value="">Select a timeframe...</option>
+          <option value="ready-now">Ready to purchase now</option>
+          <option value="within-30-days">Within 30 days</option>
+          <option value="1-3-months">1-3 months</option>
+          <option value="just-researching">Just researching options</option>
+        </select>
       </div>
 
       <div className="form-group">
