@@ -5,23 +5,30 @@ import type { Prospect } from "./AdminDashboard";
 import { TIMELINE_LABELS } from "./AdminDashboard";
 
 const STATUSES = ["new", "contacted", "interested", "closed"] as const;
+const RISK_LEVELS = ["green", "yellow", "red"] as const;
+const RISK_LABELS: Record<string, string> = { green: "OK", yellow: "Caution", red: "Risk" };
 
 export default function ProspectRow({ prospect }: { prospect: Prospect }) {
+  const autoRisk = prospect.metadata?.fraudFlag ?? "green";
   const [status, setStatus] = useState(prospect.meta_status ?? "new");
+  const [risk, setRisk] = useState(prospect.meta_risk ?? autoRisk);
   const [notes, setNotes] = useState(prospect.meta_notes ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const save = useCallback(
-    async (newStatus: string, newNotes: string) => {
+    async (newStatus: string, newNotes: string, newRisk?: string) => {
       setSaving(true);
       setSaved(false);
+
+      const body: Record<string, string> = { status: newStatus, notes: newNotes };
+      if (newRisk !== undefined) body.risk = newRisk;
 
       await fetch(`/api/admin/submissions/${prospect.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus, notes: newNotes }),
+        body: JSON.stringify(body),
       });
 
       setSaving(false);
@@ -48,10 +55,11 @@ export default function ProspectRow({ prospect }: { prospect: Prospect }) {
   });
 
   const meta = prospect.metadata;
-  const fraudFlag = meta?.fraudFlag ?? "green";
   const fraudReasons = meta?.fraudReasons ?? [];
   const geo = meta?.geo;
   const timeOnPage = meta?.timeOnPage;
+  const visitCount = meta?.visitCount;
+  const firstVisit = meta?.firstVisit;
   const timeline = prospect.values.timeline;
 
   return (
@@ -59,13 +67,21 @@ export default function ProspectRow({ prospect }: { prospect: Prospect }) {
       <tr className="prospect-main-row">
         <td style={{ whiteSpace: "nowrap", fontSize: "0.8rem" }}>{dateStr}</td>
         <td>
-          <span
-            className={`fraud-flag ${fraudFlag}`}
+          <select
+            className={`risk-select ${risk}`}
+            value={risk}
             title={fraudReasons.join("\n")}
+            onChange={(e) => {
+              setRisk(e.target.value);
+              save(status, notes, e.target.value);
+            }}
           >
-            <span className={`fraud-dot ${fraudFlag}`} />
-            {fraudFlag === "green" ? "OK" : fraudFlag === "yellow" ? "Caution" : "Risk"}
-          </span>
+            {RISK_LEVELS.map((r) => (
+              <option key={r} value={r}>
+                {RISK_LABELS[r]}
+              </option>
+            ))}
+          </select>
         </td>
         <td style={{ fontWeight: 600 }}>{prospect.values.name ?? ""}</td>
         <td>
@@ -117,17 +133,25 @@ export default function ProspectRow({ prospect }: { prospect: Prospect }) {
                 {timeOnPage !== undefined && (
                   <span>{timeOnPage < 60 ? `${timeOnPage}s` : `${Math.floor(timeOnPage / 60)}m ${timeOnPage % 60}s`} on page</span>
                 )}
+                {visitCount !== undefined && visitCount > 1 && (
+                  <span style={{ color: "#155724" }}>
+                    {visitCount} visits{firstVisit ? ` (first: ${new Date(firstVisit).toLocaleDateString("en-US", { month: "short", day: "numeric" })})` : ""}
+                  </span>
+                )}
+                {visitCount !== undefined && visitCount <= 1 && (
+                  <span>1st visit</span>
+                )}
                 {meta?.isDuplicate && (
                   <span style={{ color: "#856404" }}>
                     Repeat ({meta.duplicateCount} prev)
                   </span>
                 )}
-                {fraudReasons.length > 0 && fraudFlag !== "green" && (
-                  <span style={{ color: fraudFlag === "red" ? "#dc3545" : "#856404", fontStyle: "italic" }}>
+                {fraudReasons.length > 0 && risk !== "green" && (
+                  <span style={{ color: risk === "red" ? "#dc3545" : "#856404", fontStyle: "italic" }}>
                     {fraudReasons.join("; ")}
                   </span>
                 )}
-                {!geo && timeOnPage === undefined && fraudFlag === "green" && (
+                {!geo && timeOnPage === undefined && risk === "green" && (
                   <span style={{ color: "#999" }}>No intel available</span>
                 )}
               </div>

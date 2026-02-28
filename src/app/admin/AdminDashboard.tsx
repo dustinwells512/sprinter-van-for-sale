@@ -33,10 +33,13 @@ export type Prospect = {
     fraudFlag?: "green" | "yellow" | "red";
     fraudScore?: number;
     fraudReasons?: string[];
+    visitCount?: number;
+    firstVisit?: string;
   } | null;
   created_at: string;
   meta_status: string | null;
   meta_notes: string | null;
+  meta_risk: string | null;
 };
 
 const TIMELINE_LABELS: Record<string, string> = {
@@ -91,6 +94,7 @@ export default async function AdminDashboard() {
       ...s,
       meta_status: meta?.status ?? "new",
       meta_notes: meta?.notes ?? null,
+      meta_risk: meta?.risk_override ?? null,
     };
   });
 

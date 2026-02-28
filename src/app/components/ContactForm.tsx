@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, FormEvent } from "react";
+import { getVisitData } from "./VisitTracker";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -27,6 +28,7 @@ export default function ContactForm() {
     setErrorMsg("");
 
     const timeOnPage = Math.round((Date.now() - loadTimeRef.current) / 1000);
+    const visitData = getVisitData();
 
     try {
       const res = await fetch("/api/contact", {
@@ -39,6 +41,8 @@ export default function ContactForm() {
           message: data.get("message"),
           timeline: data.get("timeline"),
           timeOnPage,
+          visitCount: visitData.visitCount,
+          firstVisit: visitData.firstVisit,
           referrer: document.referrer || "",
         }),
       });

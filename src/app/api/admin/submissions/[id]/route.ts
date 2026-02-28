@@ -14,23 +14,25 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const { status, notes } = await req.json();
+  const { status, notes, risk } = await req.json();
 
   const supabase = getSupabase();
 
   // Upsert into submission_meta
+  const upsertData: Record<string, unknown> = {
+    submission_id: id,
+    site_id: "sprinter-van",
+    status: status || "new",
+    notes: notes ?? null,
+  };
+  if (risk !== undefined) {
+    upsertData.risk_override = risk || null;
+  }
+
   const { error } = await supabase
     .schema("forms")
     .from("submission_meta")
-    .upsert(
-      {
-        submission_id: id,
-        site_id: "sprinter-van",
-        status: status || "new",
-        notes: notes ?? null,
-      },
-      { onConflict: "submission_id" }
-    );
+    .upsert(upsertData, { onConflict: "submission_id" });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

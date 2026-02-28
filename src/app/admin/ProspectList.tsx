@@ -9,30 +9,19 @@ type Filter =
   | "new"
   | "contacted"
   | "interested"
-  | "closed"
-  | "green"
-  | "yellow"
-  | "red";
+  | "closed";
 
 export default function ProspectList({ prospects }: { prospects: Prospect[] }) {
   const [filter, setFilter] = useState<Filter>(null);
 
   const statusCounts = { new: 0, contacted: 0, interested: 0, closed: 0 };
-  const fraudCounts = { green: 0, yellow: 0, red: 0 };
   for (const p of prospects) {
     const s = (p.meta_status ?? "new") as keyof typeof statusCounts;
     if (s in statusCounts) statusCounts[s]++;
-    const f = (p.metadata?.fraudFlag ?? "green") as keyof typeof fraudCounts;
-    if (f in fraudCounts) fraudCounts[f]++;
   }
 
   const filtered = filter
-    ? prospects.filter((p) => {
-        if (filter === "green" || filter === "yellow" || filter === "red") {
-          return (p.metadata?.fraudFlag ?? "green") === filter;
-        }
-        return (p.meta_status ?? "new") === filter;
-      })
+    ? prospects.filter((p) => (p.meta_status ?? "new") === filter)
     : prospects;
 
   function card(
@@ -63,9 +52,6 @@ export default function ProspectList({ prospects }: { prospects: Prospect[] }) {
         {card("Contacted", statusCounts.contacted, "contacted")}
         {card("Interested", statusCounts.interested, "interested")}
         {card("Closed", statusCounts.closed, "closed")}
-        {card("Clean", fraudCounts.green, "green", "#28a745")}
-        {card("Caution", fraudCounts.yellow, "yellow", "#ffc107")}
-        {card("Flagged", fraudCounts.red, "red", "#dc3545")}
       </div>
 
       {filter && (

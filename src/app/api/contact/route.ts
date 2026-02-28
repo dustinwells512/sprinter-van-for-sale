@@ -47,7 +47,7 @@ const TIMELINE_LABELS: Record<string, string> = {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, message, timeline, timeOnPage, referrer } = body;
+    const { name, email, phone, message, timeline, timeOnPage, visitCount, firstVisit, referrer } = body;
 
     if (!name || !email || !message || !timeline) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -89,6 +89,8 @@ export async function POST(req: NextRequest) {
       submittedAt: new Date().toISOString(),
       referrer: referrer || "",
       timeOnPage: timeOnPage || 0,
+      visitCount: visitCount || 1,
+      firstVisit: firstVisit || null,
       ip,
       geo: geoData,
       emailDomain,

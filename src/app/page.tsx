@@ -8,10 +8,12 @@ import Disclosure from "./components/Disclosure";
 import FAQ from "./components/FAQ";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
+import VisitTracker from "./components/VisitTracker";
 
 export default function Home() {
   return (
     <>
+      <VisitTracker />
       <Nav />
       <Hero />
       <Highlights />

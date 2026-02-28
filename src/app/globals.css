@@ -900,9 +900,28 @@ body {
 
 .admin-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-stats-secondary {
+    display: flex;
+    gap: 0.75rem;
     margin-bottom: 2rem;
+}
+
+.admin-stats-secondary .admin-stat-card {
+    padding: 0.6rem 1rem;
+    min-width: 80px;
+}
+
+.admin-stats-secondary .stat-value {
+    font-size: 1.2rem;
+}
+
+.admin-stats-secondary .stat-label {
+    font-size: 0.7rem;
 }
 
 .admin-stat-card {
@@ -1008,8 +1027,9 @@ body {
 
 .prospect-detail {
     display: flex;
-    gap: 1.5rem;
-    padding: 0.25rem 0 0.25rem 0;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.25rem 0 0.5rem 0;
 }
 
 .prospect-intel {
@@ -1067,6 +1087,21 @@ body {
     background: white;
     cursor: pointer;
 }
+
+.risk-select {
+    padding: 0.2rem 0.4rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: white;
+    cursor: pointer;
+    appearance: auto;
+}
+
+.risk-select.green { color: #28a745; border-color: #28a745; }
+.risk-select.yellow { color: #856404; border-color: #ffc107; }
+.risk-select.red { color: #dc3545; border-color: #dc3545; }
 
 .notes-textarea {
     width: 100%;
