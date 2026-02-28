@@ -139,8 +139,11 @@ export async function GET(req: NextRequest) {
     const snippet = d.reply_snippet
       ? (d.reply_snippet.length > 60 ? d.reply_snippet.slice(0, 60) + "..." : d.reply_snippet)
       : "";
+    const typeLabel = d.reply_type === "first" ? "First reply" : "Follow-up";
+    const typeColor = d.reply_type === "first" ? "#28a745" : "#5B7C99";
     draftHtmlRows.push(`
       <tr>
+        <td style="padding:6px 8px;border-bottom:1px solid #eee;color:${typeColor};font-weight:600;font-size:13px;">${typeLabel}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600;">${escapeHtml(d.from_name ?? "")}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #eee;">
           <a href="mailto:${escapeHtml(d.from_email)}" style="color:#5B7C99;">${escapeHtml(d.from_email)}</a>
@@ -152,9 +155,12 @@ export async function GET(req: NextRequest) {
   }
 
   // Build subject line
+  const firstDrafts = (replyDrafts ?? []).filter((d) => d.reply_type === "first").length;
+  const followUpDrafts = draftCount - firstDrafts;
   const parts: string[] = [];
   if (submissionCount > 0) parts.push(`${submissionCount} new lead${submissionCount === 1 ? "" : "s"}`);
-  if (draftCount > 0) parts.push(`${draftCount} draft${draftCount === 1 ? "" : "s"} ready`);
+  if (firstDrafts > 0) parts.push(`${firstDrafts} first repl${firstDrafts === 1 ? "y" : "ies"}`);
+  if (followUpDrafts > 0) parts.push(`${followUpDrafts} follow-up${followUpDrafts === 1 ? "" : "s"}`);
   const subject = `Sprinter Van: ${parts.join(", ")} today`;
 
   // Submissions section HTML
@@ -208,6 +214,7 @@ export async function GET(req: NextRequest) {
   <table style="width:100%;border-collapse:collapse;margin:16px 0;">
     <thead>
       <tr style="background:#f8f9fa;">
+        <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Type</th>
         <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Name</th>
         <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Email</th>
         <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Their Reply</th>
@@ -238,9 +245,10 @@ export async function GET(req: NextRequest) {
   </p>
 </div>`;
 
-  const draftTextLines = (replyDrafts ?? []).map((d) =>
-    `  - ${d.from_name ?? ""} <${d.from_email}>${d.reply_snippet ? `: "${d.reply_snippet.slice(0, 60)}"` : ""}`
-  );
+  const draftTextLines = (replyDrafts ?? []).map((d) => {
+    const type = d.reply_type === "first" ? "First reply" : "Follow-up";
+    return `  - [${type}] ${d.from_name ?? ""} <${d.from_email}>${d.reply_snippet ? `: "${d.reply_snippet.slice(0, 60)}"` : ""}`;
+  });
 
   const textBody = `Sprinter Van — Daily Digest
 ${submissionCount > 0 ? `${submissionCount} new submission${submissionCount === 1 ? "" : "s"} in the last 24 hours (${totalCount ?? "?"} total)\n\n${rows.join("\n")}` : "No new submissions."}
