@@ -111,7 +111,6 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         "x-api-key": apiKey!,
-        "Origin": req.headers.get("origin") || req.nextUrl.origin,
       },
       body: JSON.stringify({
         formId,
