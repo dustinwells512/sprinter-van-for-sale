@@ -219,42 +219,6 @@ Dustin"
     echo $((CURRENT_COUNT + 1)) > "$DRAFTS_TODAY_FILE"
     DRAFTS_CREATED=$((DRAFTS_CREATED + 1))
 
-    # Send notification email
-    SG_KEY=$($HOME/bin/op item get "SendGrid API Key" --vault VPS --fields password --reveal 2>/dev/null)
-
-    if [[ -n "$SG_KEY" ]]; then
-        NOTIFY_HTML="<div style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;color:#333;\">
-<h3>New reply to Sprinter Van listing</h3>
-<p><strong>From:</strong> ${FROM_NAME} &lt;${FROM_EMAIL}&gt;</p>
-<p><strong>Type:</strong> ${REPLY_TYPE_LABEL}</p>
-<p><strong>Subject:</strong> ${SUBJECT}</p>
-<p><strong>Their reply:</strong></p>
-<blockquote style=\"border-left:3px solid #5B7C99;padding-left:12px;color:#555;\">${REPLY_TEXT}</blockquote>
-<p style=\"margin-top:1.5rem;\">A draft response has been created in your Gmail drafts. Review and send when ready.</p>
-<p><a href=\"https://mail.google.com/mail/u/0/#drafts\" style=\"background:#5B7C99;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;\">Open Gmail Drafts</a></p>
-<p style=\"margin-top:1rem;\"><a href=\"https://sprinter.dustinwells.com/admin\" style=\"color:#5B7C99;\">Open Admin Dashboard</a></p>
-</div>"
-
-        curl -s --request POST \
-            --url https://api.sendgrid.com/v3/mail/send \
-            --header "Authorization: Bearer $SG_KEY" \
-            --header "Content-Type: application/json" \
-            --data "$(jq -n \
-                --arg to_email "dustin+sprinter@dustinwells.com" \
-                --arg from_email "dustin@dustinwells.com" \
-                --arg from_name "Sprinter Van Bot" \
-                --arg subject "Draft ready: ${REPLY_TYPE_LABEL} from $FROM_NAME" \
-                --arg html "$NOTIFY_HTML" \
-                '{
-                    personalizations: [{to: [{email: $to_email}]}],
-                    from: {email: $from_email, name: $from_name},
-                    subject: $subject,
-                    content: [{type: "text/html", value: $html}]
-                }')" > /dev/null
-
-        echo "$LOG_PREFIX Notification email sent."
-    fi
-
     echo "$LOG_PREFIX Done processing $MSG_ID."
 done
 
