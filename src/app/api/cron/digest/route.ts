@@ -39,18 +39,31 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  if (!submissions || submissions.length === 0) {
-    // No new submissions — don't send an email
-    return NextResponse.json({ sent: false, reason: "No new submissions" });
+  // Get reply drafts created in the last 24 hours
+  const { data: replyDrafts } = await supabase
+    .schema("forms")
+    .from("reply_drafts")
+    .select("*")
+    .eq("site_id", "sprinter-van")
+    .gte("created_at", since)
+    .order("created_at", { ascending: false });
+
+  const draftCount = replyDrafts?.length ?? 0;
+  const submissionCount = submissions?.length ?? 0;
+
+  if (submissionCount === 0 && draftCount === 0) {
+    return NextResponse.json({ sent: false, reason: "No new activity" });
   }
 
   // Fetch meta for these submissions
-  const ids = submissions.map((s) => s.id);
-  const { data: metas } = await supabase
-    .schema("forms")
-    .from("submission_meta")
-    .select("*")
-    .in("submission_id", ids);
+  const ids = (submissions ?? []).map((s) => s.id);
+  const { data: metas } = ids.length > 0
+    ? await supabase
+        .schema("forms")
+        .from("submission_meta")
+        .select("*")
+        .in("submission_id", ids)
+    : { data: [] };
 
   const metaMap = new Map(
     (metas ?? []).map((m) => [m.submission_id, m])
@@ -68,7 +81,7 @@ export async function GET(req: NextRequest) {
   const rows: string[] = [];
   const htmlRows: string[] = [];
 
-  for (const s of submissions) {
+  for (const s of (submissions ?? [])) {
     const meta = metaMap.get(s.id);
     const risk = (meta?.risk_override ?? s.metadata?.fraudFlag ?? "green") as keyof typeof riskCounts;
     if (risk in riskCounts) riskCounts[risk]++;
@@ -115,14 +128,40 @@ export async function GET(req: NextRequest) {
     `);
   }
 
-  const count = submissions.length;
-  const subject = `Sprinter Van: ${count} new lead${count === 1 ? "" : "s"} today`;
+  // Build draft reply rows for the digest
+  const draftHtmlRows: string[] = [];
+  for (const d of (replyDrafts ?? [])) {
+    const time = new Date(d.created_at).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "America/Denver",
+    });
+    const snippet = d.reply_snippet
+      ? (d.reply_snippet.length > 60 ? d.reply_snippet.slice(0, 60) + "..." : d.reply_snippet)
+      : "";
+    draftHtmlRows.push(`
+      <tr>
+        <td style="padding:6px 8px;border-bottom:1px solid #eee;font-weight:600;">${escapeHtml(d.from_name ?? "")}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #eee;">
+          <a href="mailto:${escapeHtml(d.from_email)}" style="color:#5B7C99;">${escapeHtml(d.from_email)}</a>
+        </td>
+        <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:13px;color:#666;">${escapeHtml(snippet)}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;color:#999;">${time}</td>
+      </tr>
+    `);
+  }
 
-  const htmlBody = `
-<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:700px;margin:0 auto;color:#333;">
-  <h2 style="margin-bottom:4px;">Sprinter Van — Daily Digest</h2>
+  // Build subject line
+  const parts: string[] = [];
+  if (submissionCount > 0) parts.push(`${submissionCount} new lead${submissionCount === 1 ? "" : "s"}`);
+  if (draftCount > 0) parts.push(`${draftCount} draft${draftCount === 1 ? "" : "s"} ready`);
+  const subject = `Sprinter Van: ${parts.join(", ")} today`;
+
+  // Submissions section HTML
+  const submissionsHtml = submissionCount > 0 ? `
+  <h3 style="margin-bottom:4px;">New Submissions</h3>
   <p style="color:#666;margin-top:0;">
-    ${count} new submission${count === 1 ? "" : "s"} in the last 24 hours
+    ${submissionCount} new submission${submissionCount === 1 ? "" : "s"} in the last 24 hours
     &bull; ${totalCount ?? "?"} total all-time
   </p>
 
@@ -157,7 +196,35 @@ export async function GET(req: NextRequest) {
     <tbody>
       ${htmlRows.join("")}
     </tbody>
-  </table>
+  </table>` : "";
+
+  // Drafts section HTML
+  const draftsHtml = draftCount > 0 ? `
+  <h3 style="margin-bottom:4px;">Reply Drafts</h3>
+  <p style="color:#666;margin-top:0;">
+    ${draftCount} draft response${draftCount === 1 ? " was" : "s were"} auto-created from prospect replies.
+    <a href="https://mail.google.com/mail/u/0/#drafts" style="color:#5B7C99;font-weight:600;">Review in Gmail Drafts</a>
+  </p>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <thead>
+      <tr style="background:#f8f9fa;">
+        <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Name</th>
+        <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Email</th>
+        <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Their Reply</th>
+        <th style="padding:6px 8px;text-align:left;font-size:12px;color:#666;border-bottom:2px solid #dee2e6;">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${draftHtmlRows.join("")}
+    </tbody>
+  </table>` : "";
+
+  const htmlBody = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:700px;margin:0 auto;color:#333;">
+  <h2 style="margin-bottom:4px;">Sprinter Van — Daily Digest</h2>
+
+  ${submissionsHtml}
+  ${draftsHtml}
 
   <p style="margin-top:24px;">
     <a href="https://sprinter.dustinwells.com/admin" style="background:#5B7C99;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;">
@@ -171,10 +238,13 @@ export async function GET(req: NextRequest) {
   </p>
 </div>`;
 
-  const textBody = `Sprinter Van — Daily Digest
-${count} new submission${count === 1 ? "" : "s"} in the last 24 hours (${totalCount ?? "?"} total)
+  const draftTextLines = (replyDrafts ?? []).map((d) =>
+    `  - ${d.from_name ?? ""} <${d.from_email}>${d.reply_snippet ? `: "${d.reply_snippet.slice(0, 60)}"` : ""}`
+  );
 
-${rows.join("\n")}
+  const textBody = `Sprinter Van — Daily Digest
+${submissionCount > 0 ? `${submissionCount} new submission${submissionCount === 1 ? "" : "s"} in the last 24 hours (${totalCount ?? "?"} total)\n\n${rows.join("\n")}` : "No new submissions."}
+${draftCount > 0 ? `\n${draftCount} draft reply${draftCount === 1 ? "" : "s"} created:\n${draftTextLines.join("\n")}` : ""}
 
 View all: https://sprinter.dustinwells.com/admin`;
 
@@ -207,7 +277,8 @@ View all: https://sprinter.dustinwells.com/admin`;
 
   return NextResponse.json({
     sent: true,
-    count,
+    submissions: submissionCount,
+    drafts: draftCount,
     sgStatus: sgRes.status,
   });
 }
